@@ -36,33 +36,31 @@ Site configuration files go in `/data/sites-enabled/`:
 ```
 $ ls /tmp/sites-enabled
 example.com
-$ docker run -v /tmp/sites-enabled:/data/sites-enabled abevoelker/nginx
+$ docker run -v /tmp/sites-enabled:/data/sites-enabled:ro abevoelker/nginx
 ```
 
 ### nginx.conf
 
-If you have a custom `nginx.conf`, just mount it to `/data/conf/`:
+If you have a custom `nginx.conf`, just mount it to `/data/conf/nginx.conf`:
 
 ```
-$ ls /tmp/conf
-nginx.conf
-$ docker run -v /tmp/conf:/data/conf abevoelker/nginx
+$ docker run -v /tmp/conf/my_nginx.conf:/data/conf/nginx.conf:ro abevoelker/nginx
 ```
 
-If for some reason you don't want to call it nginx.conf or want to put it somewhere else, you'll need to change the default run command to reference it:
+If for some reason you don't want to store the file as `/data/conf/nginx.conf`, you'll need to change the default run command to reference it:
 
 ```
 $ docker run -v /tmp/foo:/foo abevoelker/nginx nginx -c /foo/nginx.conf
 ```
 
-Be sure to check out the `nginx.conf` provided with this image for Docker-specific tweaks.
+When rolling your own config, be sure to check out the `nginx.conf` provided with this image for Docker-specific tweaks that may be helpful.  And note that if you change the base image, it may not provide the `/dev/stdout` and `/dev/stderr` special files.
 
 ### conf.d
 
 Extra `.conf` files go in `/data/conf.d/`:
 
 ```
-$ docker run -v /tmp/conf.d:/data/conf.d abevoelker/nginx
+$ docker run -v /tmp/conf.d:/data/conf.d:ro abevoelker/nginx
 ```
 
 Note that the default base `nginx.conf` is configured to only include files in this directory with the suffix `.conf`.
