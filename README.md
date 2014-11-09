@@ -1,8 +1,19 @@
 # nginx Dockerfile
 
-Docker image for nginx.  Differences from the [official Docker image][official-image]:
+Docker image for nginx. Both [mainline and stable][mainline-vs-stable] releases are supported; the `latest` tag uses the mainline nginx release per the [nginx maintainer recommendations][mainline-vs-stable].  All available tags on Docker Hub are:
+
+| Docker Hub tag | nginx release |
+|----------------|---------------|
+| `latest`       | mainline      |
+| `mainline`     | mainline      |
+| `stable`       | stable        |
+| `1.7`          | mainline      |
+| `1.6`          | stable        |
+
+Differences from the [official Docker image][official-image]:
 
 * Provides a *stable* tag (the official Docker nginx image only provides the mainline/development version of nginx).
+* Uses the Ubuntu PPA installation path, so there are some extra compiled modules available.
 * Sets `worker_processes` to `auto`. This value should typically be set to the number of cores on the machine.  Because the Debian/Ubuntu installers set this at install-time to a static value equal to the detected number of cores on the machine, many Docker images get this wrong.  `auto` means nginx will attempt to detect the number of cores when nginx starts up.
 * Bypass copy-on-write filesystem for `/data`, `/var/www`, `/var/cache/nginx`, and `/var/log/nginx` directories.  This results in better performance from the locations that nginx needs to modify the disk.
 * Change default config to read configuration from `/data` directories (see configuration section for more info).
@@ -11,16 +22,31 @@ Docker image for nginx.  Differences from the [official Docker image][official-i
 
 ```
 $ docker run -d -p 8080:80 abevoelker/nginx
-a05187a086b896afed4d8f53fe523de3933682d2997d3bdf105f3678f53a3648
+$ curl -I http://localhost:8080
+HTTP/1.1 200 OK
+Server: nginx/1.7.7
+Date: Sun, 09 Nov 2014 03:44:27 GMT
+Content-Type: text/html
+Content-Length: 867
+Last-Modified: Sun, 09 Nov 2014 03:38:48 GMT
+Connection: keep-alive
+ETag: "545ee1c8-363"
+Accept-Ranges: bytes
+```
+
+or, if you prefer the stable version of nginx:
+
+```
+$ docker run -d -p 8080:80 abevoelker/nginx:stable
 $ curl -I http://localhost:8080
 HTTP/1.1 200 OK
 Server: nginx/1.6.2
-Date: Sun, 09 Nov 2014 00:39:09 GMT
+Date: Sun, 09 Nov 2014 03:45:35 GMT
 Content-Type: text/html
 Content-Length: 867
-Last-Modified: Sun, 09 Nov 2014 00:33:54 GMT
+Last-Modified: Sun, 09 Nov 2014 03:42:09 GMT
 Connection: keep-alive
-ETag: "545eb672-363"
+ETag: "545ee291-363"
 Accept-Ranges: bytes
 ```
 
@@ -74,4 +100,5 @@ There's also a `make pull` included as a shorthand for pulling the image.  By de
 
 MIT license.
 
+[mainline-vs-stable]: http://nginx.com/blog/nginx-1-6-1-7-released/
 [official-image]: https://github.com/nginxinc/docker-nginx
