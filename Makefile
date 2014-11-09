@@ -1,9 +1,11 @@
-PROJECT  ?= abevoelker/nginx
+PROJECT ?= abevoelker/nginx
+VERSION ?= mainline
+TAG     ?= latest
 
 ifdef REGISTRY
-  IMAGE=$(REGISTRY)/$(PROJECT)
+  IMAGE=$(REGISTRY)/$(PROJECT):$(TAG)
 else
-  IMAGE=$(PROJECT)
+  IMAGE=$(PROJECT):$(TAG)
 endif
 
 all:
@@ -11,8 +13,8 @@ all:
 	@echo "  * build - build a Docker image for $(IMAGE)"
 	@echo "  * pull  - pull down previous docker builds of $(IMAGE)"
 
-build: Dockerfile
-	docker build -t $(IMAGE) .
+build:
+	cd $(VERSION) && docker build -t $(IMAGE) .
 
 pull:
 	docker pull $(IMAGE) || true

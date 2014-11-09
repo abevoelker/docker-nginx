@@ -1,12 +1,9 @@
 # nginx Dockerfile
 
-Docker image for nginx.  I created this image because the [official nginx Docker image][official-image] is kind of weak in my opinion, mainly in terms of it only using the development version of nginx and not making configuration easy.
+Docker image for nginx.  Differences from the [official Docker image][official-image]:
 
-The following tweaks have been applied to Dockerize nginx:
-
-* Builds from the official nginx *stable* PPA (the official Docker nginx image uses the non-stable, development/mainline version of nginx!).
-* Disable daemonization and log to stdout and stderr directly (standard Dockerization).
-* Set `worker_processes` to `auto`. This is the number of cores that nginx will use. The Ubuntu installer will detect the amount of cores the machine has and encode that in nginx.conf by default, so by default this would be set to the number of cores of the machine that builds the Docker image (not what you want).
+* Provides a *stable* tag (the official Docker nginx image only provides the mainline/development version of nginx).
+* Sets `worker_processes` to `auto`. This value should typically be set to the number of cores on the machine.  Because the Debian/Ubuntu installers set this at install-time to a static value equal to the detected number of cores on the machine, many Docker images get this wrong.  `auto` means nginx will attempt to detect the number of cores when nginx starts up.
 * Bypass copy-on-write filesystem for `/data`, `/var/www`, `/var/cache/nginx`, and `/var/log/nginx` directories.  This results in better performance from the locations that nginx needs to modify the disk.
 * Change default config to read configuration from `/data` directories (see configuration section for more info).
 
@@ -65,11 +62,13 @@ $ docker run -v /tmp/conf.d:/data/conf.d:ro abevoelker/nginx
 
 Note that the default base `nginx.conf` is configured to only include files in this directory with the suffix `.conf`.
 
-## Building
+## Makefile
 
-There's a Makefile with `make build` included as a shorthand for building the image.  If you're using a private registry, you can do `REGISTRY=example.com make build` and the image will be tagged `example.com/abevoelker/nginx`.
+There's a Makefile with `make build` included as a shorthand for building the image.  By default it will build the mainline version of nginx; if you prefer the stable version, do `make build VERSION=stable`.
 
-There's also a `make pull` included as a shorthand for pulling the image.
+There are also `REGISTRY` and `TAG` variables available, so e.g. `make build REGISTRY=example.com TAG=foo` will build the image `example.com/abevoelker/nginx:foo`.
+
+There's also a `make pull` included as a shorthand for pulling the image.  By default pulls the `latest` tag but you can provide your own, e.g. `make pull TAG=stable`.
 
 ## License
 

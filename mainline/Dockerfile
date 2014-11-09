@@ -11,9 +11,9 @@ RUN locale-gen en_US.UTF-8 &&\
 # Install build dependencies
   apt-get update &&\
   DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common &&\
-# Add official nginx APT repositories
-  apt-add-repository ppa:nginx/stable &&\
-# Update apt cache with PPAs
+# Add nginx PPA
+  apt-add-repository ppa:nginx/development &&\
+# Update apt cache with PPA
   apt-get update &&\
 # Install nginx
   DEBIAN_FRONTEND=noninteractive apt-get install -y nginx &&\
