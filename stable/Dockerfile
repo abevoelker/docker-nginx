@@ -25,7 +25,7 @@ RUN \
   DEBIAN_FRONTEND=noninteractive apt-get remove --purge -y software-properties-common &&\
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-VOLUME ["/data", "/var/www", "/var/cache/nginx", "/var/log/nginx"]
+VOLUME ["/var/cache/nginx", "/var/log/nginx"]
 
 CMD ["nginx", "-c", "/data/conf/nginx.conf"]
 
