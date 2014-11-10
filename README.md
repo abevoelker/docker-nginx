@@ -15,7 +15,7 @@ Differences from the [official Docker image][official-image]:
 * Provides a *stable* tag (the official Docker nginx image only provides the mainline/development version of nginx).
 * Uses the Ubuntu PPA installation path, so there are some extra compiled modules available.
 * Sets `worker_processes` to `auto`. This value should typically be set to the number of cores on the machine.  Because the Debian/Ubuntu installers set this at install-time to a static value equal to the detected number of cores on the machine, many Docker images get this wrong.  `auto` means nginx will attempt to detect the number of cores when nginx starts up.
-* Bypass copy-on-write filesystem for `/data`, `/var/www`, `/var/cache/nginx`, and `/var/log/nginx` directories.  This results in better performance from the locations that nginx needs to modify the disk.
+* Bypass copy-on-write (COW) filesystem for `/var/cache/nginx` and `/var/log/nginx` directories.  This should result in better write performance in the locations nginx modifies.
 * Change default config to read configuration from `/data` directories (see configuration section for more info).
 
 ## Basic usage
