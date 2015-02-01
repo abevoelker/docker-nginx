@@ -12,6 +12,7 @@ Docker image for nginx. Both [mainline and stable][mainline-vs-stable] releases 
 
 Differences from the [official Docker image][official-image]:
 
+* Enables environment variable interpolation in config files (thanks to scripts taken from [`shepmaster/nginx-template-image`][nginx-template-image])
 * Provides a *stable* tag (the official Docker nginx image only provides the mainline/development version of nginx).
 * Uses the Ubuntu PPA installation path, so there are some extra compiled modules available.
 * Sets `worker_processes` to `auto`. This value should typically be set to the number of cores on the machine.  Because the Debian/Ubuntu installers set this at install-time to a static value equal to the detected number of cores on the machine, many Docker images get this wrong.  `auto` means nginx will attempt to detect the number of cores when nginx starts up.
@@ -62,6 +63,8 @@ example.com
 $ docker run -v /tmp/sites-enabled:/data/sites-enabled:ro abevoelker/nginx
 ```
 
+If you need environment variable interpolation in your site configs, put the files in `/data/sites-templates` with a `.tmpl` extension and they will be copied to `/data/sites-enabled/` with the `.tmpl` extension removed.  See [`shepmaster/nginx-template-image`][nginx-template-image] for more info.
+
 ### nginx.conf
 
 If you have a custom `nginx.conf`, just mount it to `/data/conf/nginx.conf`:
@@ -102,3 +105,4 @@ MIT license.
 
 [mainline-vs-stable]: http://nginx.com/blog/nginx-1-6-1-7-released/
 [official-image]: https://github.com/nginxinc/docker-nginx
+[nginx-template-image]: https://github.com/shepmaster/nginx-template-image

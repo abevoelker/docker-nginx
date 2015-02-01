@@ -4,6 +4,9 @@ MAINTAINER Abe Voelker <abe@abevoelker.com>
 # Provide a custom nginx.conf, tweaked for Docker use
 COPY nginx.conf /data/conf/
 
+# Add nginx templating helper scripts
+COPY bin/ /usr/sbin/
+
 # Ensure UTF-8 locale
 COPY locale /etc/default/locale
 RUN \
@@ -20,6 +23,9 @@ RUN \
   DEBIAN_FRONTEND=noninteractive apt-get install -y nginx &&\
 # Copy default config files to /data
   /bin/bash -c "cp -a /etc/nginx/{conf.d,sites-enabled} /data/" &&\
+# Create /data/sites-templates directory
+  mkdir /data/sites-templates &&\
+  chmod 0755 /data/sites-templates &&\
 # Clean up APT and temporary files when done
   apt-get clean &&\
   DEBIAN_FRONTEND=noninteractive apt-get remove --purge -y software-properties-common &&\
@@ -27,6 +33,7 @@ RUN \
 
 VOLUME ["/var/cache/nginx", "/var/log/nginx"]
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["nginx", "-c", "/data/conf/nginx.conf"]
 
 EXPOSE 80 443
